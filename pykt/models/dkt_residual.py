@@ -70,13 +70,10 @@ class DKTResidual(nn.Module):
         neg_key = self._symbolic_key("negseqs")
 
         if p_key not in dcur:
-            p = torch.full_like(ref, 0.5)
-            logit = torch.zeros_like(p)
-            depth = torch.zeros_like(p)
-            total = torch.zeros_like(p)
-            pos = torch.zeros_like(p)
-            neg = torch.zeros_like(p)
-            return p, torch.stack([p, logit, depth, total, pos, neg], dim=-1)
+            raise ValueError(
+                "DKTResidual requires the CTW base-probability sequence "
+                f"'{p_key}'; generate ctw_pseqs before running the residual model."
+            )
 
         p = dcur[p_key].float().to(model_device).clamp(1e-6, 1 - 1e-6)
         if logit_key in dcur:

@@ -106,18 +106,13 @@ class SimpleKTResidual(nn.Module):
         return torch.cat((seq[:, 0:1], shft), dim=1)
 
     def _ctw_features(self, dcur):
-        model_device = self.q_embed.weight.device
-        ref = dcur["cseqs"].float().to(model_device)
-        batch_size = ref.size(0)
-        full_seq_len = ref.size(1) + 1
-        if "ctw_pseqs" not in dcur:
-            p = torch.full((batch_size, full_seq_len), 0.5, device=ref.device, dtype=ref.dtype)
-            logit = torch.zeros_like(p)
-            depth = torch.zeros_like(p)
-            total = torch.zeros_like(p)
-            pos = torch.zeros_like(p)
-            neg = torch.zeros_like(p)
-            return p, torch.stack([p, logit, depth, total, pos, neg], dim=-1)
+        required = ("ctw_pseqs", "shft_ctw_pseqs")
+        missing = [key for key in required if key not in dcur]
+        if missing:
+            raise ValueError(
+                "SimpleKTResidual requires CTW base-probability sequence columns "
+                f"{', '.join(missing)}; generate ctw_pseqs before running the residual model."
+            )
 
         p = self._full_seq(dcur, "ctw_pseqs").clamp(1e-6, 1 - 1e-6)
         if "ctw_logitseqs" in dcur:

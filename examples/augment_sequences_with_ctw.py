@@ -7,15 +7,19 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from pykt.utils.ctw_feature_builder import augment_sequence_csv_with_ctw
 
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser(description="Augment a processed sequence CSV with CTW per-step features.")
     parser.add_argument("--sequence_csv", type=str, required=True)
     parser.add_argument("--output_csv", type=str, required=True)
     parser.add_argument("--item_col", type=str, default="questions")
     parser.add_argument("--support_csv", type=str, default="", help="Optional support CSV. If omitted, build out-of-fold CTW from sequence_csv itself.")
     parser.add_argument("--ctw_max_depth", type=int, default=6)
-    parser.add_argument("--ctw_backend", type=str, default="cpp")
-    args = parser.parse_args()
+    parser.add_argument("--ctw_backend", type=str, default="python")
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
 
     out = augment_sequence_csv_with_ctw(
         sequence_csv=args.sequence_csv,

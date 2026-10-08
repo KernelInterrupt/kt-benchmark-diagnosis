@@ -54,7 +54,7 @@ def augment_sequence_csv_with_ctw(
     item_col: str = "questions",
     support_csv: Optional[str] = None,
     max_depth: int = 6,
-    backend: str = "cpp",
+    backend: str = "python",
 ) -> str:
     df = pd.read_csv(sequence_csv)
     if item_col not in df.columns or "responses" not in df.columns:
