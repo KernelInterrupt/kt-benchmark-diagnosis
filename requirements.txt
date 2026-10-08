@@ -1,4 +1,5 @@
-# Exact package versions for this workspace.
+# Development environment pins for this workspace. Package installation uses
+# the runtime requirements declared in setup.py.
 Bottleneck==1.4.2
 brotlicffi==1.2.0.0
 certifi==2026.1.4
@@ -7,6 +8,7 @@ charset-normalizer==3.4.4
 contourpy==1.3.1
 cycler==0.12.1
 einops==0.8.2
+entmax==1.3
 filelock==3.20.3
 fonttools==4.61.0
 fsspec==2026.2.0
@@ -60,4 +62,5 @@ triton==2.3.0
 typing_extensions==4.15.0
 tzdata==2025.3
 urllib3==2.6.3
+wandb==0.22.0
 wheel==0.46.3
