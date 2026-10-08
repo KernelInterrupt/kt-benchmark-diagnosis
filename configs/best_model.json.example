@@ -1,0 +1,13 @@
+{
+  "DATASET_NAME": {
+    "MODEL_NAME": {
+      "model_path_fold_first": [
+        "PATH_TO_FOLD_0_MODEL",
+        "PATH_TO_FOLD_1_MODEL",
+        "PATH_TO_FOLD_2_MODEL",
+        "PATH_TO_FOLD_3_MODEL",
+        "PATH_TO_FOLD_4_MODEL"
+      ]
+    }
+  }
+}

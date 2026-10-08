@@ -1,0 +1,3 @@
+include pykt/utils/ctw_core.cpp
+include pykt/utils/_ctw_core.so
+include examples/build_ctw_cpp.py

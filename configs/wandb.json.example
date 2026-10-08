@@ -1,0 +1,4 @@
+{
+  "uid": "YOUR_WANDB_USER_OR_ENTITY",
+  "api_key": "PASTE_YOUR_WANDB_API_KEY_LOCALLY"
+}
