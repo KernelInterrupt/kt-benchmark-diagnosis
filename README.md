@@ -1,48 +1,69 @@
-# CTW anchor and knowledge-tracing analysis tools
+# An Information-Theoretic Evaluation Framework for Benchmark and Model Diagnosis in Knowledge Tracing
 
-This source distribution provides the symbolic Context Tree Weighting (CTW) anchor, the LIU uncertainty estimator, neural residual-probe training entry points, and analysis/export code for knowledge tracing. Use Python >= 3.10.
+**Houru Jiang, Zixi Wang, Tengteng Cheng, Xueyi Li, Mingliang Hou, Jiaqi Zheng, Renqiang Luo, Teng Guo, Zitao Liu**
+**NeurIPS 2026** · [Official NeurIPS poster](https://neurips.cc/virtual/2026/loc/paris/poster/149407)
 
-## Layout
+## Overview
 
-- `pykt/` contains the reusable library, models, preprocessing code, and estimators.
-- `examples/` contains runnable demonstrations, training/evaluation launchers, and data-preparation helpers.
-- `scripts/` and `tools/` contain analysis and export workflows.
-- `configs/` contains configuration templates.
+Knowledge-tracing (KT) systems are usually compared with aggregate AUC or accuracy. Those global scores hide where errors originate and do not show whether a benchmark is close to saturation. The project treats local predictability as the diagnostic object instead.
 
-Run example and analysis commands from the source tree (a checkout or an extracted source distribution). They read benchmark data and prediction exports from paths supplied by the caller; use each command's `--help` option for its inputs. Where supported, paths can be relocated with `PYKT_REPO_ROOT`.
+The framework uses Context Tree Weighting (CTW) as an operational causal anchor to estimate the Local Irreducible Uncertainty (LIU) of each student interaction. Model predictions are projected onto this shared uncertainty coordinate, and gains are evaluated across entropy bands rather than only with a single global score. In this release, the CTW context is built from past item/response tokens and the current query-item token; no skill tags or Q-matrix are required by the anchor implementation.
 
-## Anchor information set
+***REMOVED***
 
-The CTW anchor conditions on the last `D-1` pairs of (item identifier, binary response), plus the currently queried item identifier. It uses no skill tags and no Q-matrix. This is implemented by [`pykt/utils/ctw_estimator.py`](pykt/utils/ctw_estimator.py) and [`pykt/utils/ctw_feature_builder.py`](pykt/utils/ctw_feature_builder.py).
+***REMOVED***
 
-## Installation and use
+## What is in this repository
 
-Install the package and its dependencies in a Python >= 3.10 environment:
+- [`pykt/`](pykt/) — reusable KT models, data loaders and preprocessing, plus CTW/LIU estimators in [`pykt/utils/`](pykt/utils/).
+- [`examples/`](examples/) — CTW/LIU demos, synthetic sanity checks, sequence augmentation, preprocessing helpers, and W&B training/evaluation entry points.
+- [`scripts/`](scripts/) — post-processing and uncertainty-band analyses that consume caller-provided artifacts.
+- [`tools/`](tools/) — alignment, export, queue-building, and other analysis utilities for externally produced predictions/checkpoints.
+- [`configs/`](configs/) — dataset/model configuration files and safe W&B/best-model templates.
+
+The core anchor is implemented in [`pykt/utils/ctw_estimator.py`](pykt/utils/ctw_estimator.py); [`pykt/utils/ctw_feature_builder.py`](pykt/utils/ctw_feature_builder.py) adds per-step CTW features to a processed sequence CSV.
+
+## Install
+
+Use Python 3.10 or newer:
 
 ```sh
 python -m pip install .
+python examples/env_check.py
 ```
 
-The CTW/LIU demo can be run with `python examples/liu_estimator_demo.py`. The synthetic CTW sanity check is `python examples/fig2_sanity_check.py`. Neural probe training uses the W&B entry point, for example:
+For editable development installs, use `python -m pip install -e .`. The runtime dependencies are declared in [`setup.py`](setup.py); [`requirements.txt`](requirements.txt) records the development pins.
+
+## Quick use
+
+Run the lightweight demonstrations from the repository root:
 
 ```sh
-python examples/wandb_simplekt_residual_train.py --dataset_name nips_task34 --model_name simplekt_residual --emb_type qid --fold 0
+python examples/liu_estimator_demo.py
+python examples/fig2_sanity_check.py
 ```
 
-Supply the dataset, fold artifacts, and training parameters for the workflow being run. W&B examples expect a local `configs/wandb.json`; copy `configs/wandb.json.example` there and fill it locally. `configs/best_model.json.example` shows the dataset/model/checkpoint-list keys expected by the merge utility. Never commit actual credentials. `python examples/env_check.py` reports locally available dependencies and command usability.
+Augment a processed sequence CSV (with `questions` and `responses` columns) with per-step CTW features. When no support file is supplied, the input must also contain a `fold` column so the helper can build out-of-fold anchors:
 
-## Analysis entry points
+```sh
+python examples/augment_sequences_with_ctw.py \
+  --sequence_csv path/to/sequence.csv \
+  --output_csv path/to/sequence_with_ctw.csv \
+  --item_col questions \
+  --ctw_max_depth 6 \
+  --ctw_backend python
+```
 
-- `scripts/rebuttal_unified_analysis.py` provides cohort metrics, entropy bands, calibration, and fold-level tests.
-- `scripts/rebuttal_postprocess.py` provides prediction postprocessing and figures.
-- `tools/export_full_paper_tables.py` exports derived tables, including item-level RU/IG summaries.
-- `tools/build_strict_symbolic_fold_jobs.py` and `tools/export_strict_symbolic_question_predictions.py` build strict symbolic benchmark artifacts.
-- `tools/run_simplekt_residual_local_bayes_worker.py` and its queue builders support residual-probe training/evaluation.
+The optional C++ backend can be built with `python examples/build_ctw_cpp.py`; the checked-in shared object is platform-specific, so the Python backend is the portable fallback. W&B training scripts (for example [`examples/wandb_simplekt_residual_train.py`](examples/wandb_simplekt_residual_train.py)) require your own datasets, run configuration, and credentials. Keep local credentials out of version control; [`configs/wandb.json.example`](configs/wandb.json.example) is only a template.
 
-## Provenance and dependencies
+The analysis scripts accept caller-provided manifests and prediction exports. To inspect the expected inputs without running an analysis, use:
 
-This archive is based on the upstream [`pykt-toolkit`](https://github.com/pykt-team/pykt-toolkit) project, with package version `0.0.38`. It is distributed under the MIT license.
+```sh
+python scripts/rebuttal_postprocess.py --check-inputs --repo . --datasets nips_task34 algebra2005
+```
 
-The source-tree `pykt/utils/_ctw_core.so` is a Linux x86-64 build. The wheel carries the portable C++ source instead; build the optional C++ backend locally with `python examples/build_ctw_cpp.py` when needed. The anchor's maximum context depth `D` counts `(D-1)` past (item, response) tokens plus the current query token, so effective response-history depth is `D-1`.
+## Scope and limitations
 
-CUDA/cuDF alignment and support scripts require NVIDIA RAPIDS; the residual worker requires `torch` and scikit-learn. `requirements.txt` records the development environment pins, while package installation uses the dependencies declared in `setup.py`.
+This repository is a code release. It does not include a `results/` directory, benchmark datasets, trained checkpoints, or per-sample prediction exports. Analysis and export commands therefore read paths supplied by the caller; they are not a turnkey reproduction of every table in the NeurIPS paper. Dataset access, model training, checkpoint selection, and prediction generation must be provided separately. The synthetic sanity check is a software smoke test, not a claim about the paper’s reported numbers.
+
+The package is distributed under the [MIT License](LICENSE) and follows the upstream [`pykt-toolkit`](https://github.com/pykt-team/pykt-toolkit) layout.
