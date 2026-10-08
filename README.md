@@ -62,8 +62,8 @@ The analysis scripts accept caller-provided manifests and prediction exports. To
 python scripts/rebuttal_postprocess.py --check-inputs --repo . --datasets nips_task34 algebra2005
 ```
 
-## Scope and limitations
+## Data and experiments
 
-This repository is a code release. It does not include a `results/` directory, benchmark datasets, trained checkpoints, or per-sample prediction exports. Analysis and export commands therefore read paths supplied by the caller; they are not a turnkey reproduction of every table in the NeurIPS paper. Dataset access, model training, checkpoint selection, and prediction generation must be provided separately. The synthetic sanity check is a software smoke test, not a claim about the paper’s reported numbers.
+This repository provides the implementation and analysis utilities. Analysis workflows operate on dataset and prediction artifacts supplied by the user.
 
 The package is distributed under the [MIT License](LICENSE) and follows the upstream [`pykt-toolkit`](https://github.com/pykt-team/pykt-toolkit) layout.
