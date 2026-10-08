@@ -2,7 +2,7 @@ include LICENSE
 include README.md
 include pykt/utils/ctw_core.cpp
 include pykt/utils/_ctw_core.so
-recursive-include configs *.json
+recursive-include configs *.json *.json.example
 recursive-include examples *.py *.sh *.yaml
 recursive-include scripts *.py
 recursive-include tools *.py
