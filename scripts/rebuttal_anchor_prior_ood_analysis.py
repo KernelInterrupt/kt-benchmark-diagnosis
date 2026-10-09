@@ -317,8 +317,6 @@ def build_existing_transfer_index(repo: Path) -> pd.DataFrame:
             "best existing global convex rows across NIPS/Algebra/ASSIST/Bridge artifacts",
         ),
         (
-        ),
-        (
             "assist2009_contextmix_validation_fitted",
             repo / "runs/assist2009_contextmix_validation_fitted_residual_ensemble_20260725/summary.csv",
             "ASSIST2009 contextmix validation-fitted residual ensemble metrics",

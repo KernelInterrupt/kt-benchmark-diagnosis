@@ -28,6 +28,7 @@ TEST_KEY_TO_SRC = {
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build only selected symbolic sidecar files for specific folds.")
     parser.add_argument("--dataset-name", required=True)
+    parser.add_argument("--method", choices=["ctw", "contextmix"], required=True)
     parser.add_argument("--folds", required=True)
     parser.add_argument(
         "--test-keys",

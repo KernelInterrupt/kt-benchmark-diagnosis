@@ -35,6 +35,8 @@ def _seq_to_csv(values: Sequence[float]) -> str:
 
 def _method_name(method: str) -> str:
     name = str(method).strip().lower()
+    if name not in {"ctw", "contextmix"}:
+        raise ValueError("method must be one of: ctw, contextmix")
     return name
 
 
@@ -42,12 +44,12 @@ def _method_suffix(method: str, depth_or_order: int) -> str:
     name = _method_name(method)
     if name == "ctw":
         return f"ctw_depth{int(depth_or_order)}"
-    if name == "contextmix":
-        return f"contextmix_order{int(depth_or_order)}"
+    return f"contextmix_order{int(depth_or_order)}"
 
 
 def _symbolic_column_names() -> Dict[str, str]:
     # Keep the output schema aligned with the existing residual KT pipeline.
+    # The file path encodes which symbolic estimator produced the contents.
     return {
         "p": "ctw_pseqs",
         "logit": "ctw_logitseqs",
@@ -62,8 +64,7 @@ def _create_estimator(method: str, depth_or_order: int, ctw_backend: str):
     name = _method_name(method)
     if name == "ctw":
         return create_ctw_estimator(max_depth=depth_or_order, backend=ctw_backend)
-    if name == "contextmix":
-        return create_contextmix_estimator(max_order=depth_or_order, backend="cpp")
+    return create_contextmix_estimator(max_order=depth_or_order, backend="cpp")
 
 
 def _resolve_build_jobs(task_count: int) -> int:

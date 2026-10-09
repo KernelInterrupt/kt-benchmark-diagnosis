@@ -13,11 +13,13 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DATASETS = ["nips_task34", "algebra2005", "assist2015"]
+DEFAULT_METHODS = ["contextmix"]
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Aggregate pure symbolic question-window late_mean metrics.")
     parser.add_argument("--datasets", default="nips_task34,algebra2005,assist2015")
+    parser.add_argument("--methods", default=",".join(DEFAULT_METHODS))
     parser.add_argument("--workers", type=int, default=16)
     parser.add_argument(
         "--out-dir",

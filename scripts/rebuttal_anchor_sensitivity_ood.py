@@ -324,15 +324,8 @@ def write_existing_artifact_index(repo: Path, output: Path) -> None:
             "scope": "existing multi-dataset standard evaluation artifact",
         },
         {
-            "scope": "existing Bridge2006 transfer-style dataset artifact",
-        },
-        {
             "artifact": "assist2009 validation-fitted residual ensemble",
             "path": "runs/assist2009_contextmix_validation_fitted_residual_ensemble_20260725/summary.csv",
-            "scope": "existing held-out validation-fitted ensemble artifact",
-        },
-        {
-            "artifact": "bridge2006 validation-fitted residual ensemble",
             "scope": "existing held-out validation-fitted ensemble artifact",
         },
     ]

@@ -22,6 +22,7 @@ def parse_args() -> argparse.Namespace:
         description="Build strict symbolic fold-aligned artifacts and write per-fold artifact_info.json files."
     )
     parser.add_argument("--dataset-name", required=True)
+    parser.add_argument("--method", choices=["ctw", "contextmix"], required=True)
     parser.add_argument("--folds", default="0,1,2,3,4")
     parser.add_argument("--item-col", default="questions")
     parser.add_argument("--depth-or-order", type=int, default=6)

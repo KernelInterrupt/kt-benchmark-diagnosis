@@ -66,6 +66,7 @@ def fused_model_label(strict_method_label: str) -> str:
 def model_family(model_label: str) -> str:
     if model_label.endswith("+nn"):
         return model_label
+    if model_label in {"ctw", "contextmix"}:
         return model_label
     return "kt"
 

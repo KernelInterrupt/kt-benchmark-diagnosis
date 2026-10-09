@@ -105,7 +105,9 @@ def export_method(repo_root: Path, dataset_dir: Path, method: str, output_dir: P
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Export strict CTW/ContextMix question-level predictions from symbolic artifact CSVs.")
     parser.add_argument("--dataset-root", type=Path, required=True, help="e.g. runs/symbolic_hybrid_benchmark_parallel/fold_jobs/nips_task34")
+    parser.add_argument("--methods", type=str, default="ctw,contextmix")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
