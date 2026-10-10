@@ -9,10 +9,6 @@ Knowledge-tracing (KT) systems are usually compared with aggregate AUC or accura
 
 The framework uses Context Tree Weighting (CTW) as an operational causal anchor to estimate the Local Irreducible Uncertainty (LIU) of each student interaction. Model predictions are projected onto this shared uncertainty coordinate, and gains are evaluated across entropy bands rather than only with a single global score. In this release, the CTW context is built from past item/response tokens and the current query-item token; no skill tags or Q-matrix are required by the anchor implementation.
 
-***REMOVED***
-
-***REMOVED***
-
 ## What is in this repository
 
 - [`pykt/`](pykt/) — reusable KT models, data loaders and preprocessing, plus CTW/LIU estimators in [`pykt/utils/`](pykt/utils/).
